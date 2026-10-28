@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team J: Multilingual Voice Assistant</title>
+<style>
+  body{font-family:system-ui,sans-serif;background:#0f172a;color:#e2e8f0;margin:0;padding:2rem;max-width:860px;margin-inline:auto}
+  h1{margin:0 0 .25rem} p.tag{color:#94a3b8;margin-top:0}
+  .card{background:#1e293b;border-radius:10px;padding:1rem;margin:1rem 0}
+  button{background:#38bdf8;border:0;border-radius:6px;padding:.4rem .8rem;cursor:pointer;font-weight:600}
+  code{background:#0f172a;padding:2px 6px;border-radius:4px}
+  textarea,pre{width:100%;box-sizing:border-box;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:.5rem}
+  pre{white-space:pre-wrap;min-height:3rem}
+  .row{display:flex;gap:.5rem;align-items:center;margin:.4rem 0;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<h1>Team J: Multilingual Voice Assistant</h1>
+<p class="tag">Speak in Hindi / Bengali / Odia, get a spoken reply</p>
+
+<div class="card">
+  <b>Starter API tester.</b> Replace this page with your real UI.
+  <div class="row"><button onclick="call('GET','/health')">GET /health</button></div>
+  <div id="eps"></div>
+  <label>JSON body (for POST/PATCH)</label>
+  <textarea id="body" rows="4">{}</textarea>
+  <label>Response</label>
+  <pre id="out">...</pre>
+</div>
+
+<div class="card"><!-- TODO: build your frontend here --></div>
+
+<script>
+const ENDPOINTS = [{"m": "POST", "p": "/api/transcribe", "d": "Audio file -> {text, language}"}, {"m": "POST", "p": "/api/translate", "d": "Body: {text, target} -> {text}"}, {"m": "POST", "p": "/api/speak", "d": "Body: {text, lang} -> audio"}];
+const eps = document.getElementById("eps");
+ENDPOINTS.forEach(e => {
+  const row = document.createElement("div"); row.className = "row";
+  const b = document.createElement("button"); b.textContent = e.m + " " + e.p;
+  b.onclick = () => call(e.m, e.p);
+  row.append(b, Object.assign(document.createElement("span"), {textContent: e.d}));
+  eps.append(row);
+});
+async function call(method, path) {
+  const url = path.replace(/:\w+/g, "1");
+  const opts = {method, headers: {"Content-Type": "application/json"}};
+  if (method !== "GET") opts.body = document.getElementById("body").value;
+  try {
+    const r = await fetch(url, opts);
+    const txt = await r.text();
+    document.getElementById("out").textContent = r.status + "\n" + txt;
+  } catch (err) { document.getElementById("out").textContent = String(err); }
+}
+</script>
+</body>
+</html>
